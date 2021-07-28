@@ -7,7 +7,6 @@ namespace DiffSniffer;
 use IteratorAggregate;
 use IteratorIterator;
 use PHP_CodeSniffer\Config;
-use PHP_CodeSniffer\Files\DummyFile;
 use PHP_CodeSniffer\Files\File;
 use PHP_CodeSniffer\Filters\Filter;
 use PHP_CodeSniffer\Ruleset;
@@ -42,6 +41,8 @@ final class Iterator implements IteratorAggregate
     /** @var string */
     private $cwd;
 
+    private $diff;
+
     /**
      * @param Traversable<int,string> $relativePaths
      */
@@ -52,6 +53,7 @@ final class Iterator implements IteratorAggregate
         Config $config,
         string $cwd
     ) {
+    	$this->diff = $relativePaths;
         $this->absolutePaths = $this->absolutize($relativePaths, $cwd);
         $this->changeSet     = $changeSet;
         $this->ruleSet       = $ruleSet;
@@ -111,7 +113,7 @@ final class Iterator implements IteratorAggregate
 
     private function createFile(string $absolutePath, string $contents): File
     {
-        $file       = new DummyFile($contents, $this->ruleSet, $this->config);
+        $file       = new DummyFileWithDiffData($contents, $this->ruleSet, $this->config, $this->diff, $this->cwd);
         $file->path = $absolutePath;
 
         return $file;

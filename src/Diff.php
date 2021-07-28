@@ -137,4 +137,9 @@ class Diff implements IteratorAggregate, Countable
 
         return $paths;
     }
+
+    public function getPaths()
+	{
+		return $this->paths;
+	}
 }
